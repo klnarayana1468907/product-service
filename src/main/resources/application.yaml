@@ -5,10 +5,17 @@ spring:
   application:
     name: product-service
 
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
   datasource:
     url: jdbc:postgresql://localhost:5432/productdb
     username: postgres
     password: postgres
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -17,3 +24,48 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    consumer:
+      group-id: product-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        spring.json.trusted.packages: "*"
+
+logging:
+  file:
+    name: logs/product-service.log
+
+  level:
+    root: INFO
+    org.springframework.kafka: INFO
+    com.company.ecommerce: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env
+
+  endpoint:
+    health:
+      show-details: always
+
+info:
+  app:
+    name: Product Service
+    version: 1.0
+    description: E-Commerce Product Microservice
+
+eureka:
+  client:
+    service-url:
+       defaultZone: http://localhost:8761/eureka/
+
+  instance:
+    prefer-ip-address: true
